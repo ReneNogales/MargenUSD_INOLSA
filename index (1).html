@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="theme-color" content="#f4f6f8" />
+  <title>Calculadora de Margen USD - INOLSA</title>
+  <style>
+    :root{
+      --bg:#f4f6f8; --card:#ffffff; --text:#1f2937; --muted:#6b7280;
+      --line:#d8dde3; --accent:#14532d; --accent2:#166534; --soft:#ecfdf3;
+      --danger:#b42318; --shadow:0 8px 24px rgba(31,41,55,.08);
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;padding:18px 14px 32px}
+    .wrap{max-width:760px;margin:0 auto}
+    .header{text-align:center;margin:6px 0 18px}
+    .header h1{font-size:28px;line-height:1.1;margin:0 0 5px;font-weight:750;letter-spacing:-.02em}
+    .header p{margin:0;color:var(--muted);font-size:15px}
+    .card{background:var(--card);border-radius:18px;box-shadow:var(--shadow);padding:16px;margin-bottom:14px}
+    .section-title{font-size:14px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:0 0 10px}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+    .field{display:flex;flex-direction:column;gap:6px}
+    label{font-size:13px;color:var(--muted);font-weight:600}
+    input{width:100%;border:1px solid var(--line);border-radius:12px;padding:13px 12px;font-size:17px;background:#fff;color:var(--text);outline:none;text-align:right}
+    input:focus{border-color:#7a9b83;box-shadow:0 0 0 3px rgba(22,101,52,.08)}
+    .full{grid-column:1/-1}
+    .results{background:linear-gradient(180deg,#ffffff,#f9fbfa);border:1px solid #d9e7dd}
+    .main-result{text-align:center;padding:6px 0 12px}
+    .main-result .label{font-size:13px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+    .main-result .value{font-size:38px;font-weight:800;letter-spacing:-.03em;margin-top:6px;color:var(--accent)}
+    .main-result .unit{font-size:15px;color:var(--muted);font-weight:650}
+    .result-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .result-box{border:1px solid var(--line);border-radius:14px;padding:12px;text-align:center;background:#fff}
+    .result-box .k{font-size:12px;color:var(--muted);font-weight:650}
+    .result-box .v{font-size:20px;font-weight:750;margin-top:4px}
+    .details{margin-top:12px;border-top:1px solid var(--line);padding-top:10px}
+    .row{display:flex;justify-content:space-between;gap:14px;padding:7px 0;font-size:14px}
+    .row span:first-child{color:var(--muted)}
+    .row strong{text-align:right}
+    .actions{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:10px;margin-top:12px}
+    button{border:0;border-radius:12px;padding:13px 14px;font-size:15px;font-weight:700;cursor:pointer}
+    .calc{background:var(--accent2);color:#fff}
+    .save{background:#e8f3eb;color:var(--accent2);border:1px solid #cfe3d4}
+    .reset{background:#eef1f4;color:#374151}
+    .status{text-align:center;font-size:12px;color:var(--muted);height:18px;margin-top:8px}
+    .negative{color:var(--danger)!important}
+    .note{font-size:12px;color:var(--muted);line-height:1.45;margin-top:8px}
+    @media (max-width:560px){
+      body{padding:12px 10px 24px}.card{padding:14px;border-radius:16px}.grid{grid-template-columns:1fr 1fr;gap:9px}.header h1{font-size:25px}.main-result .value{font-size:34px}.result-grid{grid-template-columns:1fr 1fr}.actions{grid-template-columns:1fr;}
+      input{font-size:18px;padding:12px 10px}
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <h1>Calculadora de Margen USD</h1>
+    <p>Operaciones de Exportación – INOLSA</p>
+  </div>
+  <div class="card">
+    <div class="section-title">Supuestos de operación</div>
+    <div class="grid">
+      <div class="field"><label>TN de soya a procesar</label><input id="tn" type="number" step="0.01" value="1"></div>
+      <div class="field"><label>Tipo de cambio venta (Bs/USD)</label><input id="tc" type="number" step="0.01" value="12"></div>
+      <div class="field"><label>Rend. harina (%)</label><input id="rh" type="number" step="0.01" value="73.80"></div>
+      <div class="field"><label>Precio harina exp. (USD/TN)</label><input id="ph" type="number" step="0.01" value="264.91"></div>
+      <div class="field"><label>Rend. aceite (%)</label><input id="ra" type="number" step="0.01" value="20.11"></div>
+      <div class="field"><label>Precio aceite exp. (USD/TN)</label><input id="pa" type="number" step="0.01" value="1005.40"></div>
+      <div class="field"><label>Rend. cascarilla (%)</label><input id="rc" type="number" step="0.01" value="3.45"></div>
+      <div class="field"><label>Precio cascarilla nac. (USD/TN)</label><input id="pc" type="number" step="0.01" value="104.05"></div>
+      <div class="field"><label>Costo soya puesta en planta (USD/TN)</label><input id="cs" type="number" step="0.01" value="340"></div>
+      <div class="field"><label>Costos operativos (USD/TN)</label><input id="co" type="number" step="0.01" value="40"></div>
+    </div>
+    <div class="actions">
+      <button class="calc" id="calcBtn">Calcular</button>
+      <button class="save" id="saveBtn">Guardar valores</button>
+      <button class="reset" id="resetBtn">Restablecer</button>
+    </div>
+    <div class="status" id="status"></div>
+  </div>
+  <div class="card results">
+    <div class="main-result">
+      <div class="label">Margen de Contribución</div>
+      <div class="value" id="margenUsd">USD 0,00</div>
+      <div class="unit">por TN de soya</div>
+    </div>
+    <div class="result-grid">
+      <div class="result-box"><div class="k" id="labelTotalUsd">Margen total por 1 TN en USD</div><div class="v" id="totalUsd">USD 0,00</div></div>
+      <div class="result-box"><div class="k">Margen sobre ingresos</div><div class="v" id="margenPct">0,00%</div></div>
+      <div class="result-box"><div class="k">Margen por TN en Bs</div><div class="v" id="margenBs">Bs 0,00</div></div>
+      <div class="result-box"><div class="k" id="labelTotalBs">Margen total por 1 TN en Bs</div><div class="v" id="totalBs">Bs 0,00</div></div>
+    </div>
+    <div class="details">
+      <div class="section-title" id="detalleCantidad">Resultados para 1 TN de soya procesada</div>
+      <div class="row"><span>Ingreso harina</span><strong id="ih">USD 0,00</strong></div>
+      <div class="row"><span>Ingreso aceite</span><strong id="ia">USD 0,00</strong></div>
+      <div class="row"><span>Ingreso cascarilla</span><strong id="ic">USD 0,00</strong></div>
+      <div class="row"><span>Ingreso total de la operación</span><strong id="it">USD 0,00</strong></div>
+      <div class="row"><span>Costo total soya + costos operativos</span><strong id="ct">USD 0,00</strong></div>
+    </div>
+    <div class="note">Harina y aceite: precios de exportación con entrega en planta. Cascarilla: precio nacional expresado en USD. Todos los valores son editables.</div>
+  </div>
+</div>
+<script>
+const ids=['tn','tc','rh','ph','ra','pa','rc','pc','cs','co'];
+const defaults={tn:1,tc:12,rh:73.80,ph:264.91,ra:20.11,pa:1005.40,rc:3.45,pc:104.05,cs:340,co:40};
+const $=id=>document.getElementById(id);
+const n=id=>parseFloat($(id).value)||0;
+const money=(v,curr)=>`${curr} ${v.toLocaleString('es-BO',{minimumFractionDigits:2,maximumFractionDigits:2})}`;
+function calc(){
+  const tn=n('tn'), tc=n('tc');
+  const ih=n('rh')/100*n('ph');
+  const ia=n('ra')/100*n('pa');
+  const ic=n('rc')/100*n('pc');
+  const ingreso=ih+ia+ic;
+  const costos=n('cs')+n('co');
+  const margen=ingreso-costos;
+  const margenBs=margen*tc;
+  const totalUsd=margen*tn;
+  const totalBs=totalUsd*tc;
+  const pct=ingreso!==0?margen/ingreso*100:0;
+  const cantidadTexto=tn.toLocaleString('es-BO',{maximumFractionDigits:2});
+  $('labelTotalUsd').textContent=`Margen total por ${cantidadTexto} TN en USD`;
+  $('labelTotalBs').textContent=`Margen total por ${cantidadTexto} TN en Bs`;
+  $('detalleCantidad').textContent=`Resultados para ${tn.toLocaleString('es-BO',{maximumFractionDigits:2})} TN de soya procesada`;
+  $('ih').textContent=money(ih*tn,'USD'); $('ia').textContent=money(ia*tn,'USD'); $('ic').textContent=money(ic*tn,'USD');
+  $('it').textContent=money(ingreso*tn,'USD'); $('ct').textContent=money(costos*tn,'USD');
+  $('margenUsd').textContent=money(margen,'USD'); $('margenBs').textContent=money(margenBs,'Bs');
+  $('totalUsd').textContent=money(totalUsd,'USD'); $('totalBs').textContent=money(totalBs,'Bs');
+  $('margenPct').textContent=pct.toLocaleString('es-BO',{minimumFractionDigits:2,maximumFractionDigits:2})+'%';
+  ['margenUsd','margenBs','totalUsd','totalBs','margenPct'].forEach(id=>$(id).classList.toggle('negative',margen<0));
+}
+function save(){
+  const data={}; ids.forEach(id=>data[id]=$(id).value); localStorage.setItem('inolsaMargenV2',JSON.stringify(data));
+  $('status').textContent='Valores guardados en este dispositivo'; setTimeout(()=>$('status').textContent='',1800);
+}
+function load(){
+  const raw=localStorage.getItem('inolsaMargenV2'); if(!raw) return;
+  try{const data=JSON.parse(raw); ids.forEach(id=>{if(data[id]!==undefined) $(id).value=data[id]});}catch(e){}
+}
+function reset(){ids.forEach(id=>$(id).value=defaults[id]); localStorage.removeItem('inolsaMargenV2'); $('status').textContent='Valores restablecidos. Tocá Calcular para actualizar el resultado'; setTimeout(()=>$('status').textContent='',2200);}
+$('calcBtn').addEventListener('click',()=>{calc(); $('status').textContent='Cálculo actualizado'; setTimeout(()=>$('status').textContent='',1200);});
+$('saveBtn').addEventListener('click',save); $('resetBtn').addEventListener('click',reset);
+load(); calc();
+</script>
+</body>
+</html>
